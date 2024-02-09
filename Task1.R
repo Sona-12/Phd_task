@@ -1,4 +1,3 @@
-
 # Parse command line arguments
 args <- commandArgs(trailingOnly = TRUE)
 
@@ -19,12 +18,7 @@ df = read.delim(gzfile(args[1]), header = T)
 subdf <- df[, c(2,3,5)]
 
 # Print subdf
-head(subdf)
-
-# Load required libraries
-library(tidyr)
-library(dplyr)
-library(tidyverse)
+# head(subdf)
 
 # Function to split synonyms and create new rows
 split_synonyms <- function(data) {
@@ -44,21 +38,19 @@ symbol_synonyms_df <- data.frame(Symbol_Synonyms = c(table2$Symbol, table2$Synon
 # Combine the two data frames by rows
 output_data <- cbind(geneid_df, symbol_synonyms_df)
 
-
 # Sort unique rows
 sorted_df <- output_data %>%
   distinct() %>%
   arrange(GeneID, Symbol_Synonyms)
 
 # Print the sorted dataframe
-head(sorted_df)
+# head(sorted_df)
 
 df2 = read.delim(args[2], sep ="\t", header = F)
-head(df2)
-# Extract columns 3 till the end of the dataframe
+# head(df2)
+# Extracting columns 3 till the end of the dataframe
 cols_to_replace <- names(df2)[3:ncol(df2)]
 
 # Replace values using indexing
 df2[cols_to_replace] <- sapply(df2[cols_to_replace], function(x) sorted_df$GeneID[match(x, sorted_df$Symbol_Synonyms)])
-
 write.csv(df2, (paste0(args[3],".gmt")), row.names = FALSE)
